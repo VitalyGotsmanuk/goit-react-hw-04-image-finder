@@ -1,0 +1,24 @@
+.modal {
+    padding: 0px;
+    max-width: 800px;
+    width: 100%;
+    height: auto;
+    background-color: white;
+    border-radius: 10px;
+    position: absolute;
+    overflow: hidden;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+
+    &:hover {
+        cursor: auto;
+    }
+}
+
+.closeBtn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}

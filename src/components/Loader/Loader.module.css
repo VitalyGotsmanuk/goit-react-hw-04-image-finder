@@ -1,0 +1,13 @@
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 0 auto;
+}
+
+/* .loader {
+  
+  margin: 0 auto;
+} */
