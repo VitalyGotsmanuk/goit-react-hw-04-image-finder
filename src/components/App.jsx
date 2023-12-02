@@ -1,44 +1,40 @@
 import '../index.css';
 import React from 'react';
+
+import { useState, useEffect } from 'react';
+//import { Component } from 'react';
+//import { nanoid } from 'nanoid';
+
 import axios from 'axios';
 import { Notify } from 'notiflix'; 
-//import { useState } from 'react';
-import { Component } from 'react';
-//import { nanoid } from 'nanoid';
+
 import { Searchbar } from './Searchbar/Searchbar';
 import { Loader } from './Loader/Loader'
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 
-export class App extends Component {
-  state = {
-    pictures: [],
-    totalPictures: 0,
-    
-    page: 1,
-    perPage: 12,
-    totalPages: 0,
-    searchQuery: '',
+export const App = () => {
 
-    modalData: null,
-    isOpenModal: false,
-    
-    //isMorePage: false,
-    isLoading: false,
-    error: null
-  }
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  const [pictures, setPictures] = useState([]);
+  const [totalPictures, setTotalPictures] = useState(0);
 
-  fetchPictures = async () => {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const [modalData, setModalData] = useState(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const perPage = 12;
+
+  const fetchPictures = async () => {
     try {
-      this.setState({
-        isLoading: true,
-      })
-
-      let searchQuery = this.state.searchQuery;
-      let page = this.state.page;
-      let perPage = this.state.perPage;
-      //let totalPages = this.state.totalPages;
+      setIsLoading(true)
 
       const urlApi = `https://pixabay.com/api/`;
       
@@ -54,60 +50,41 @@ export class App extends Component {
 
       const { data } = await axios.get(`${urlApi}?${params}`);
 
-      let totalPages = Math.ceil(data.totalHits/perPage);
-      //console.log(totalPages);
+      let allPict = data.totalHits;
+      let totalPages = Math.ceil(allPict/perPage);
+     
+      //console.log(data.totalHits);
 
-      this.setState({
-        pictures: data.hits,
-        totalPictures: data.totalHits,
-        totalPages: totalPages,
-      })
+      setPictures(data.hits);
+      setTotalPictures(allPict);
+      setTotalPages(totalPages)
     }
     catch (error) {
-      this.setState({error: error.message})
+      setError({error: error.message})
     }
     finally {
-      this.setState({
-        isLoading: false
-      })
+      setIsLoading(false)
     }
   }
 
-  openModal = (dataForModal) => {
-    this.setState({
-      isOpenModal: true,
-      modalData: dataForModal,
-    })
-  }
-  closeModal = () => {
-    this.setState({
-      isOpenModal: false,
-      modalData: null,
-    })
+  const openModal = (dataForModal) => {
+    setIsOpenModal(true);
+    setModalData(dataForModal);
   }
 
-  // onSelectPictId = (pictId) => {
-
-  //   // let pict = this.props.largeImageURL
-  //   console.log(pictId)
-
-  //   this.setState({
-  //     selectedPictId: pictId,
-  //     //isOpenModal: true,
-  //   })
-  // }
-
-  handleInputChange = (event) => {
-    const value = event.target.value;
-    const name = event.target.name;
-    this.setState({ [name]: value });
+  const closeModal = () => {
+    setIsOpenModal(false);
+    setModalData(null);
   }
 
-  handleSearch = (event) => {
+  const handleInputChange = (event) => {
+    const { value } = event.target;
+    setSearchQuery(value);
+  }
+
+  const handleSearch = (event) => {
     event.preventDefault();
-     this.setState({
-         page: 1
-      })
+    setPage(1);
 
     const searchQuery = event.currentTarget.elements.searchQuery.value.trim();
 
@@ -115,112 +92,69 @@ export class App extends Component {
       Notify.warning(`Attention! Field must be filled.`);
     }
     else { 
-      this.fetchPictures();
+      fetchPictures();
 
-      //  if(this.state.totalPictures === 0) {
-      //       Notify.warning(`Sorry, there are no images matching your search query. Please try again.`);
-      //   } else {
-      //       Notify.success(`Hooray! We found ${this.state.totalPictures} images.`);
-    
-      //   // element.list.insertAdjacentHTML(`beforeend`, createMarkup(allPict.hits));
-      //   // lightbox.refresh();
-        
-      //   // if (page < totalPages){
-      //   //     element.loadMore.classList.replace(`load-more-hidden`, `load-more`)
-      //   //  }
-      //  }
-        
-      console.log("Submit", searchQuery)
+       if(totalPictures === 0) {
+            Notify.warning(`Sorry, there are no images matching your search query. Please try again.`);
+        } else {
+            Notify.success(`Hooray! We found ${totalPictures} images.`);
+      }
+      
+    //console.log("Submit", searchQuery)
+
+    //console.log("Totall", totalPictures)
     }
-
-        // this.setState({
-        //     searchQuery: searchQuery
-        // })
-        
-        // const contact = {
-        //     name,
-        //     number //: Number.parseFloat(number), //має бути число
-        // };
-            
-        // this.props.fetchPictures(searchQuery)  
   }
   
-  handleClick = () => { 
-    this.setState({
-      page: this.state.page + 1,
-      //perPage: this.state.perPage + 12
-    })
-    //console.log(this.state.page)
+  const handleClick = () => {
+    setPage(prevState => prevState +1);
+    
+    //console.log(page)
   }  
 
-  componentDidMount() {
-
-  }
-
-  componentDidUpdate(_, prevState) {
-    if (prevState.page !== this.state.page) { 
-      this.fetchPictures();
-     
+  useEffect(() => {
+    if (page > 1) {
+        fetchPictures();
     }
-  }
+    // if (prevState.page !== page) {
+    //   }
+  }, [page])
 
-  componentWillUnmount() {
-        
-    };
+  // componentDidUpdate(_, prevState) {
+  //   if (prevState.page !== this.state.page) { 
+  //     this.fetchPictures();
+  //     }
+  // }
 
-  render() {   
-    return (
-      <>
-        {/* <h1>3-nd Image Gallery HW! 🐱‍🏍</h1> */}
+  return (
+      <>{/* <h1>4-th Image Gallery HW! 🐱‍🏍</h1> */}
         <Searchbar
-          searchQuery={this.state.searchQuery}
-          onChange={this.handleInputChange}
-          handleSearch={this.handleSearch}    
+          searchQuery={searchQuery}
+          onChange={handleInputChange}
+          handleSearch={handleSearch}    
         />
-        {this.state.isLoading && <Loader/>}
-        {this.state.error !== null && (
+        {isLoading && <Loader/>}
+        {error !== null && (
           <p className="error-bage">
-            Oops, some error occured... {this.state.error}
+            Oops, some error occured... {error}
           </p>
         )}
        
         <ImageGallery
-          pictures={this.state.pictures}
-          openModal={this.openModal}
-
+          pictures={pictures}
+          openModal={openModal}
         >                  
         </ImageGallery>
 
-        {this.state.totalPages > this.state.page &&
+        {totalPages > page &&
           <Button
-            handleClick={this.handleClick}
+            handleClick={handleClick}
           />}
 
-        {this.state.isOpenModal && <Modal
-          closeModal={this.closeModal}
-          modalData={this.state.modalData}
+        {isOpenModal && <Modal
+          closeModal={closeModal}
+          modalData={modalData}
         />}
       </>
     );
-  };
-}
-
-
-
-// import axios from 'axios';
-// const fetchImage = async (searchWord, page) => {
-//   const API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXX';
-//   const BASE_URL = 'https://pixabay.com/api/';
-//   const options = {
-//     params: {
-//       key: API_KEY,
-//       q: searchWord,
-//       image_type: 'photo',
-//       orientation: 'horizontal',
-//       safesearch: 'true',
-//       page: page,
-//       per_page: 12,
-//     },
-//   };
-//   return await axios.get(BASE_URL, options);
-// };
+  }

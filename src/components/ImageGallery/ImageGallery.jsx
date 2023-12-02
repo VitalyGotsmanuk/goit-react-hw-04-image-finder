@@ -18,7 +18,7 @@ export const ImageGallery = ({
                         webformatURL={pictures.webformatURL}
                         largeImageURL={pictures.largeImageURL}
                         openModal={openModal}
-                />
+                    />
             ))}
         </ul>
     )
