@@ -94,11 +94,11 @@ export const App = () => {
     else { 
       fetchPictures();
 
-       if(totalPictures === 0) {
-            Notify.warning(`Sorry, there are no images matching your search query. Please try again.`);
-        } else {
-            Notify.success(`Hooray! We found ${totalPictures} images.`);
-      }
+      //  if(totalPictures === 0) {
+      //       Notify.warning(`Sorry, there are no images matching your search query. Please try again.`);
+      //   } else {
+      //       Notify.success(`Hooray! We found ${totalPictures} images.`);
+      // }
       
     //console.log("Submit", searchQuery)
 
@@ -116,8 +116,7 @@ export const App = () => {
     if (page > 1) {
         fetchPictures();
     }
-    // if (prevState.page !== page) {
-    //   }
+   
   }, [page])
 
   // componentDidUpdate(_, prevState) {
