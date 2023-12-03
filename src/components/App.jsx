@@ -19,7 +19,7 @@ export const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   const [pictures, setPictures] = useState([]);
-  const [totalPictures, setTotalPictures] = useState(0);
+  //const [totalPictures, setTotalPictures] = useState(0);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -56,7 +56,7 @@ export const App = () => {
       //console.log(data.totalHits);
 
       setPictures(data.hits);
-      setTotalPictures(allPict);
+      //setTotalPictures(allPict);
       setTotalPages(totalPages)
     }
     catch (error) {
@@ -114,9 +114,9 @@ export const App = () => {
 
   useEffect(() => {
     if (page > 1) {
-        fetchPictures();
+
+      fetchPictures();
     }
-   
   }, [page])
 
   // componentDidUpdate(_, prevState) {
