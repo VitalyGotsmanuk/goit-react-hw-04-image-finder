@@ -1,7 +1,10 @@
 import '../index.css';
 import React from 'react';
 
-import { useState, useEffect } from 'react';
+import {
+  useState,
+  // useEffect
+} from 'react';
 //import { Component } from 'react';
 //import { nanoid } from 'nanoid';
 
@@ -33,6 +36,7 @@ export const App = () => {
   const perPage = 12;
 
   const fetchPictures = async () => {
+    
     try {
       setIsLoading(true)
 
@@ -105,19 +109,14 @@ export const App = () => {
     //console.log("Totall", totalPictures)
     }
   }
-  
+    
   const handleClick = () => {
     setPage(prevState => prevState +1);
     
-    //console.log(page)
+    console.log(page)
   }  
 
-  useEffect(() => {
-    if (page > 1) {
 
-      fetchPictures();
-    }
-  }, [page])
 
   // componentDidUpdate(_, prevState) {
   //   if (prevState.page !== this.state.page) { 
