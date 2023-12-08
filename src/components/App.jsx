@@ -131,6 +131,7 @@ export const App = () => {
           onChange={handleInputChange}
           handleSearch={handleSearch}    
         />
+      
         {isLoading && <Loader/>}
         {error !== null && (
           <p className="error-bage">
